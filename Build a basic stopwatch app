@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="stopwatch">
+        <div id="display">00:00:00.000</div>
+        <div class="controls">
+            <button id="startPauseBtn">Start</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+
+/* styles.css */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+.stopwatch {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+#display {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.controls button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+#startPauseBtn {
+    background-color: #28a745;
+    color: white;
+}
+
+#resetBtn {
+    background-color: #dc3545;
+    color: white;
+}
+
+#startPauseBtn:hover {
+    background-color: #218838;
+}
+
+#resetBtn:hover {
+    background-color: #c82333;
+}
+
+// script.js
+document.addEventListener('DOMContentLoaded', () => {
+    const display = document.getElementById('display');
+    const startPauseBtn = document.getElementById('startPauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    let startTime = 0;
+    let elapsedTime = 0;
+    let timerInterval;
+    let isRunning = false;
+
+    const updateDisplay = (time) => {
+        const milliseconds = Math.floor((time % 1000) / 1);
+        const seconds = Math.floor((time / 1000) % 60);
+        const minutes = Math.floor((time / (1000 * 60)) % 60);
+
+        const formattedMilliseconds = milliseconds.toString().padStart(3, '0');
+        const formattedSeconds = seconds.toString().padStart(2, '0');
+        const formattedMinutes = minutes.toString().padStart(2, '0');
+
+        display.textContent = `${formattedMinutes}:${formattedSeconds}.${formattedMilliseconds}`;
+    };
+
+    const startTimer = () => {
+        startTime = Date.now() - elapsedTime;
+        timerInterval = setInterval(() => {
+            elapsedTime = Date.now() - startTime;
+            updateDisplay(elapsedTime);
+        }, 1);
+        isRunning = true;
+        startPauseBtn.textContent = 'Pause';
+    };
+
+    const pauseTimer = () => {
+        clearInterval(timerInterval);
+        isRunning = false;
+        startPauseBtn.textContent = 'Start';
+    };
+
+    const resetTimer = () => {
+        clearInterval(timerInterval);
+        isRunning = false;
+        elapsedTime = 0;
+        updateDisplay(elapsedTime);
+        startPauseBtn.textContent = 'Start';
+    };
+
+    startPauseBtn.addEventListener('click', () => {
+        if (isRunning) {
+            pauseTimer();
+        } else {
+            startTimer();
+        }
+    });
+
+    resetBtn.addEventListener('click', resetTimer);
+});
