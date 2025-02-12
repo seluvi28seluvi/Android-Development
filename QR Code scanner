@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <style>
+        #qr-reader {
+            width: 500px;
+            margin: auto;
+        }
+        #qr-result {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="qr-reader"></div>
+    <div id="qr-result">Scan a QR code to see the result here.</div>
+    <script>
+        function onScanSuccess(decodedText, decodedResult) {
+            // Handle the decoded text
+            document.getElementById('qr-result').innerText = `Scanned Result: ${decodedText}`;
+            // Optionally, you can stop scanning after a successful scan
+            html5QrcodeScanner.clear();
+            // Perform actions based on the decoded text
+            if (isValidURL(decodedText)) {
+                if (confirm("Open the scanned URL?")) {
+                    window.open(decodedText, "_blank");
+                }
+            } else {
+                alert("Scanned text is not a valid URL.");
+            }
+        }
+
+        function isValidURL(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        var html5QrcodeScanner = new Html5QrcodeScanner(
+            "qr-reader", { fps: 10, qrbox: 250 });
+        html5QrcodeScanner.render(onScanSuccess);
+    </script>
+</body>
+</html>
